@@ -1,7 +1,18 @@
 import logo from "../../../assets/react.svg";
 import { Link } from "react-router-dom";
+import { ControlTextInput } from "../../molecules";
+import { useForm } from "react-hook-form";
+
+interface IProps {
+  mobile: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export const Register = () => {
+  const {
+    formState: { errors },
+  } = useForm<IProps>();
   return (
     <>
       <div className="text-center mt-4">
@@ -24,9 +35,10 @@ export const Register = () => {
             <form>
               <div className="mb-3">
                 <label className="form-label">موبایل</label>
+                {/* <ControlTextInput name="mobile" error={errors.mobile} /> */}
                 <input className={`form-control form-control-lg`} />
                 <p className="text-danger small fw-bolder mt-1">
-                  {/* {errors.mobile?.message} */}
+                  {errors.mobile?.message}
                 </p>
                 <p className="text-danger small fw-bolder mt-1">
                   موبایل باید 11 رقم باشد
