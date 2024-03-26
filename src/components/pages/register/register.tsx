@@ -11,8 +11,16 @@ interface IProps {
 
 export const Register = () => {
   const {
+    handleSubmit,
+    control,
     formState: { errors },
+    watch,
   } = useForm<IProps>();
+
+  const onSubmit = (data: IProps) => console.log("data", data);
+
+  const password = watch("password");
+
   return (
     <>
       <div className="text-center mt-4">
@@ -32,40 +40,37 @@ export const Register = () => {
       <div className="card">
         <div className="card-body">
           <div className="m-sm-4">
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-3">
-                <label className="form-label">موبایل</label>
-                {/* <ControlTextInput name="mobile" error={errors.mobile} /> */}
-                <input className={`form-control form-control-lg`} />
-                <p className="text-danger small fw-bolder mt-1">
-                  {errors.mobile?.message}
-                </p>
-                <p className="text-danger small fw-bolder mt-1">
-                  موبایل باید 11 رقم باشد
-                </p>
+                <ControlTextInput
+                  name="username"
+                  label="موبایل"
+                  control={control}
+                  rules={{ required: "شماره تماس را وارد کنید" }}
+                  errors={errors}
+                />
               </div>
               <div className="mb-3">
-                <label className="form-label">رمز عبور</label>
-                <input
-                  className={`form-control form-control-lg`}
-                  type="password"
+                <ControlTextInput
+                  name="password"
+                  label="رمز عبور"
+                  control={control}
+                  rules={{ required: "رمز عبور را وارد کنید" }}
+                  errors={errors}
                 />
-                <p className="text-danger small fw-bolder mt-1">
-                  {/* {errors.password?.message} */}
-                </p>
               </div>
               <div className="mb-3">
-                <label className="form-label">تکرار رمز عبور</label>
-                <input
-                  className={`form-control form-control-lg`}
-                  type="password"
+                <ControlTextInput
+                  name="confirmPassword"
+                  label="تکرار رمز عبور"
+                  control={control}
+                  rules={{
+                    required: "رمز عبور وارد شده را تکرار کنید",
+                    validate: (value: string) =>
+                      value === password || "رمز عبور شما تطابق ندارد",
+                  }}
+                  errors={errors}
                 />
-                <p className="text-danger small fw-bolder mt-1">
-                  {/* {errors.confirmPassword?.message} */}
-                </p>
-                <p className="text-danger small fw-bolder mt-1">
-                  {/* {errors.confirmPassword?.message} */}
-                </p>
               </div>
               <div className="text-center mt-3">
                 <button type="submit" className="btn btn-lg btn-primary">
@@ -79,3 +84,7 @@ export const Register = () => {
     </>
   );
 };
+
+export async function registerAction({ request: Reqiest }) {
+  // const formData = await request.formData()
+}
