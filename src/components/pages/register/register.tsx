@@ -1,7 +1,16 @@
 import logo from "../../../assets/react.svg";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useActionData,
+  useNavigate,
+  useNavigation,
+  useRouteError,
+  useSubmit,
+} from "react-router-dom";
 import { ControlTextInput } from "../../molecules";
 import { useForm } from "react-hook-form";
+import { httpServices } from "../../../core/http-service";
+import { useEffect } from "react";
 
 interface IProps {
   mobile: string;
@@ -17,9 +26,30 @@ export const Register = () => {
     watch,
   } = useForm<IProps>();
 
-  const onSubmit = (data: IProps) => console.log("data", data);
+  const submitForm = useSubmit();
+
+  const onSubmit = (data: IProps) => {
+    const { confirmPassword, ...userData } = data;
+    submitForm(userData, { method: "POST" });
+  };
 
   const password = watch("password");
+
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state !== "idle";
+
+  const isSuccessOperation = useActionData();
+
+  const navigate = useNavigate();
+  const routeErrors = useRouteError();
+
+  useEffect(() => {
+    if (isSuccessOperation) {
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
+    }
+  }, []);
 
   return (
     <>
@@ -43,7 +73,7 @@ export const Register = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-3">
                 <ControlTextInput
-                  name="username"
+                  name="mobile"
                   label="موبایل"
                   control={control}
                   rules={{ required: "شماره تماس را وارد کنید" }}
@@ -73,10 +103,30 @@ export const Register = () => {
                 />
               </div>
               <div className="text-center mt-3">
-                <button type="submit" className="btn btn-lg btn-primary">
-                  ثبت نام کنید
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn btn-lg btn-primary"
+                >
+                  {isSubmitting ? "درحال انجام عملیات" : "ثبت نام کنید"}
                 </button>
               </div>
+              {isSuccessOperation ? (
+                <div className="alert alert-success text-success p-2 mt-3">
+                  عملیات با موفقیت انجام شد. به صفحه ورود منتقل میشوید
+                </div>
+              ) : null}
+              {routeErrors ? (
+                <div className="alert alert-danger text-danger p-2 mt-3">
+                  {(routeErrors as any).response?.data.map(
+                    (error: any, index: number) => (
+                      <p key={index} className="mb-0">
+                        {error.description}
+                      </p>
+                    )
+                  )}
+                </div>
+              ) : null}
             </form>
           </div>
         </div>
@@ -85,6 +135,9 @@ export const Register = () => {
   );
 };
 
-export async function registerAction({ request: Reqiest }) {
-  // const formData = await request.formData()
+export async function registerAction({ request }: any) {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  const response = await httpServices.post("/Users", data);
+  return response.status === 200;
 }

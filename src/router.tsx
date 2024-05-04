@@ -1,5 +1,5 @@
 import { RouteObject, createBrowserRouter } from "react-router-dom";
-import { Register, Login } from "./components/pages";
+import { Register, Login, registerAction } from "./components/pages";
 import IdentityLayout from "./layouts/identity-layout";
 
 export const routes: RouteObject[] = [
@@ -9,6 +9,8 @@ export const routes: RouteObject[] = [
       {
         path: "/register",
         element: <Register />,
+        action: registerAction,
+        errorElement: <Register />,
       },
       {
         path: "/login",

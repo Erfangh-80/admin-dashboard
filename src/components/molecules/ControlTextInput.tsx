@@ -19,8 +19,6 @@ export const ControlTextInput: React.FC<InputProps> = ({
   minLength,
   maxLength,
 }) => {
-  console.log("errors name", errors[name]);
-
   return (
     <div>
       <label>{label}</label>
