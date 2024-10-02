@@ -1,5 +1,6 @@
 import logo from "../../../assets/react.svg";
 import {
+  ActionFunctionArgs,
   Link,
   useActionData,
   useNavigate,
@@ -11,6 +12,7 @@ import { ControlTextInput } from "../../molecules";
 import { useForm } from "react-hook-form";
 import { httpServices } from "../../../core/http-service";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   mobile: string;
@@ -19,14 +21,20 @@ interface IProps {
 }
 
 export const Register = () => {
+  const submitForm = useSubmit();
+  const navigate = useNavigate();
+  const navigation = useNavigation();
+  const isSuccessOperation = useActionData();
+  const routeErrors = useRouteError();
+
+  const { t } = useTranslation();
+
   const {
     handleSubmit,
     control,
     formState: { errors },
     watch,
   } = useForm<IProps>();
-
-  const submitForm = useSubmit();
 
   const onSubmit = (data: IProps) => {
     const { confirmPassword, ...userData } = data;
@@ -35,13 +43,7 @@ export const Register = () => {
 
   const password = watch("password");
 
-  const navigation = useNavigation();
   const isSubmitting = navigation.state !== "idle";
-
-  const isSuccessOperation = useActionData();
-
-  const navigate = useNavigate();
-  const routeErrors = useRouteError();
 
   useEffect(() => {
     if (isSuccessOperation) {
@@ -108,7 +110,8 @@ export const Register = () => {
                   disabled={isSubmitting}
                   className="btn btn-lg btn-primary"
                 >
-                  {isSubmitting ? "درحال انجام عملیات" : "ثبت نام کنید"}
+                  {t("register.register")}
+                  {/* {isSubmitting ? "درحال انجام عملیات" : "ثبت نام کنید"} */}
                 </button>
               </div>
               {isSuccessOperation ? (
@@ -135,7 +138,7 @@ export const Register = () => {
   );
 };
 
-export async function registerAction({ request }: any) {
+export async function registerAction({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
   const response = await httpServices.post("/Users", data);

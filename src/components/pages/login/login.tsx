@@ -1,7 +1,15 @@
 import logo from "../../../assets/react.svg";
 import { Link } from "react-router-dom";
+import { ControlTextInput } from "../../molecules";
+import { useForm } from "react-hook-form";
 
 export const Login = () => {
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+  const onSubmit = () => {};
   return (
     <>
       <div className="text-center mt-4">
@@ -13,7 +21,7 @@ export const Login = () => {
         <p className="lead">
           قبلا ثبت نام نکرده اید؟
           <Link to="/register" className="me-2">
-            ثبت نام کنید{" "}
+            ثبت نام کنید
           </Link>
         </p>
       </div>
@@ -21,16 +29,23 @@ export const Login = () => {
       <div className="card">
         <div className="card-body">
           <div className="m-sm-4">
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-3">
-                <label className="form-label">موبایل</label>
-                <input className="form-control form-control-lg" />
+                <ControlTextInput
+                  control={control}
+                  name="mobile"
+                  errors={errors}
+                  label="موبایل"
+                  rules={{ required: "شماره تماس را وارد کنید" }}
+                />
               </div>
               <div className="mb-3">
-                <label className="form-label">رمز عبور</label>
-                <input
-                  className="form-control form-control-lg mb-2"
-                  type="password"
+                <ControlTextInput
+                  control={control}
+                  name="password"
+                  errors={errors}
+                  label="رمز عبور"
+                  rules={{ required: "رمز عبور را وارد کنید" }}
                 />
               </div>
               <div className="text-center mt-3">
